@@ -80,7 +80,7 @@ dependencies {
 
 //    coreLibraryDesugaring(libs.desugar.jdk.libs)
 //
-//    implementation(libs.bundles.koin)
+    implementation(libs.bundles.koin)
 
     //Network KTOR
     implementation(libs.bundles.ktor)

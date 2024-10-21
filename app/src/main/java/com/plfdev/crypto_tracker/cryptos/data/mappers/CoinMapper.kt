@@ -11,7 +11,7 @@ fun CoinDto.toCoin(): Coin {
         symbol = symbol,
         marketCapUsd = marketCapUsd,
         priceUsd = priceUsd,
-        changePercent24hr = changePercent24hr
+        changePercent24Hr = changePercent24Hr
     )
     //IF YOU HAVE A TIMEZONE STRING AND PARSE TO ANOTHER TYPE
     //IT SHOULD BE PARSE HERE WHEN YOU GET TIMEZONE STRING FROM COIN_DTO TO COIN TIMEZONE OBJECT

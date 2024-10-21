@@ -80,7 +80,7 @@ fun CoinListItem (
                 modifier = Modifier.height(8.dp)
             )
             PriceChanger(
-                valueChange = coinUi.changePercent24hr
+                valueChange = coinUi.changePercent24Hr
             )
         }
     }
@@ -106,5 +106,5 @@ internal  val previewCoin = Coin(
     symbol = "BTC",
     marketCapUsd = 1241273958896.75,
     priceUsd = 62828.15,
-    changePercent24hr = 0.1
+    changePercent24Hr = 0.1
 ).toCoinUi()
