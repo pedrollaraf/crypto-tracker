@@ -2,7 +2,7 @@ package com.plfdev.crypto_tracker.cryptos.presenter.models
 
 import androidx.annotation.DrawableRes
 import com.plfdev.crypto_tracker.cryptos.domain.Coin
-import com.plfdev.crypto_tracker.util.getDrawableIdForCoin
+import com.plfdev.crypto_tracker.core.presenter.util.getDrawableIdForCoin
 import java.text.NumberFormat
 import java.util.Locale
 

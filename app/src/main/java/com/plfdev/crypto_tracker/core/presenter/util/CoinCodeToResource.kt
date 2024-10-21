@@ -1,4 +1,4 @@
-package com.plfdev.crypto_tracker.util
+package com.plfdev.crypto_tracker.core.presenter.util
 
 import com.plfdev.crypto_tracker.R
 

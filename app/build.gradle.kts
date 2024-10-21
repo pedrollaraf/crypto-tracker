@@ -30,6 +30,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            buildConfigField("String","BASE_URL", "\"https://api.coincap.io/v2/\"")
+        }
+
+        debug {
+            buildConfigField("String","BASE_URL", "\"https://api.coincap.io/v2/\"")
         }
     }
     compileOptions {
@@ -41,6 +47,8 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        buildConfig = true //set this config to true when you have buildConfigs in gradle
+        //buildConfigField
         compose = true
     }
     composeOptions {
@@ -73,8 +81,9 @@ dependencies {
 //    coreLibraryDesugaring(libs.desugar.jdk.libs)
 //
 //    implementation(libs.bundles.koin)
-//
-//    implementation(libs.bundles.ktor)
+
+    //Network KTOR
+    implementation(libs.bundles.ktor)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
