@@ -1,8 +1,9 @@
-package com.plfdev.crypto_tracker.cryptos.domain
+package com.plfdev.crypto_tracker.cryptos.data.dto
 
 import kotlinx.serialization.Serializable
 
-data class Coin(
+@Serializable //Serializable data from API
+data class CoinDto(
     val id: String,
     val rank: Int,
     val name: String,
