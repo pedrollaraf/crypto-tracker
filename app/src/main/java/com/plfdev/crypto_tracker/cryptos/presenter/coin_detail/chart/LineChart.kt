@@ -131,7 +131,9 @@ fun LineChart(
         //GET MAX LINE COUNT
         val maxXLabelLineCount = xLabelTextLayoutResults.maxOfOrNull { it.lineCount } ?: 0
         //CALCULATE THE LINE HEIGHT
-        val xLabelLineHeight = maxXLabelHeight / maxXLabelLineCount
+        val xLabelLineHeight = if(maxXLabelLineCount > 0) {
+            maxXLabelHeight / maxXLabelLineCount
+        } else 0
 
         //GET THE MAX HEIGHT AVAILABLE - MARKERS LEFT AND BOTTOM CONSIDERING THE SPACING
         val viewPortHeightPx = size.height - (

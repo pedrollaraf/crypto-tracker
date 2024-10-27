@@ -69,9 +69,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
 
-    //implementation(libs.bundles.compose)
-    //debugImplementation(libs.bundles.compose.debug)
 
+    implementation(libs.bundles.compose)
+    debugImplementation(libs.bundles.compose.debug)
 
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -79,7 +79,8 @@ dependencies {
     implementation(libs.androidx.material3)
 
 //    coreLibraryDesugaring(libs.desugar.jdk.libs)
-//
+
+    //KOIN
     implementation(libs.bundles.koin)
 
     //Network KTOR
