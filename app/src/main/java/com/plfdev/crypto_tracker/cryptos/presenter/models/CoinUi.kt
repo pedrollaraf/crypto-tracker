@@ -3,6 +3,7 @@ package com.plfdev.crypto_tracker.cryptos.presenter.models
 import androidx.annotation.DrawableRes
 import com.plfdev.crypto_tracker.cryptos.domain.Coin
 import com.plfdev.crypto_tracker.core.presenter.util.getDrawableIdForCoin
+import com.plfdev.crypto_tracker.cryptos.presenter.coin_detail.chart.DataPoint
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -14,7 +15,8 @@ data class CoinUi(
     val marketCapUsd: DisplayableDecimalNumber,
     val priceUsd: DisplayableDecimalNumber,
     val changePercent24Hr: DisplayableDecimalNumber,
-    @DrawableRes val iconRes:Int
+    @DrawableRes val iconRes:Int,
+    val coinPriceHistory: List<DataPoint> = emptyList(),
 )
 
 data class DisplayableDecimalNumber(
