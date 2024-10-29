@@ -1,7 +1,5 @@
 package com.plfdev.crypto_tracker.cryptos.data.networking
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.plfdev.crypto_tracker.core.data.networking.constructUrl
 import com.plfdev.crypto_tracker.core.data.networking.safeCall
 import com.plfdev.crypto_tracker.core.domain.util.NetworkError

@@ -2,7 +2,8 @@ package com.plfdev.crypto_tracker.cryptos.presenter.coin_detail.chart
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -89,26 +90,43 @@ fun LineChart(
     var drawPoints by remember {
         mutableStateOf(listOf<DataPoint>())
     }
-
-    var isShowingDataPoints by remember { mutableStateOf(selectedDataPoint != null) }
-
     Canvas(
         modifier = modifier
             .fillMaxSize()
             .pointerInput(drawPoints, xLabelWidth) {
-                detectHorizontalDragGestures { change, _ ->
-                    val newSelectedDataPointIndex = getSelectedDataPointIndex(
+                detectTapGestures { change ->
+                    var newSelectedDataPointIndex = getSelectedDataPointIndex(
+                        touchOffsetX = change.x,
+                        triggerWidth = xLabelWidth,
+                        drawPoints = drawPoints,
+                    )
+
+                    if(newSelectedDataPointIndex == -1) {
+                        newSelectedDataPointIndex = 0
+                    }
+
+                    if(newSelectedDataPointIndex == -2) {
+                        newSelectedDataPointIndex = visibleDataPointsIndices.last - visibleDataPointsIndices.first
+                    }
+                    onSelectedDataPoint(dataPoints[newSelectedDataPointIndex])
+                }
+
+            }.pointerInput(drawPoints, xLabelWidth) {
+                detectDragGesturesAfterLongPress { change, _ ->
+                    var newSelectedDataPointIndex = getSelectedDataPointIndex(
                         touchOffsetX = change.position.x,
                         triggerWidth = xLabelWidth,
-                        drawPoints = drawPoints
+                        drawPoints = drawPoints,
                     )
-                    isShowingDataPoints = (
-                        newSelectedDataPointIndex + visibleDataPointsIndices.first
-                    ) in visibleDataPointsIndices
 
-                    if(isShowingDataPoints) {
-                        onSelectedDataPoint(dataPoints[newSelectedDataPointIndex])
+                    if(newSelectedDataPointIndex == -1) {
+                        newSelectedDataPointIndex = 0
                     }
+
+                    if(newSelectedDataPointIndex == -2) {
+                        newSelectedDataPointIndex = visibleDataPointsIndices.last - visibleDataPointsIndices.first
+                    }
+                    onSelectedDataPoint(dataPoints[newSelectedDataPointIndex])
                 }
             }
     ) {
@@ -348,31 +366,29 @@ fun LineChart(
             )
 
             drawPoints.forEachIndexed { drawPointIndex, dataPoint ->
-                if(isShowingDataPoints) {
-                    val circleOffset = Offset(
-                        x = dataPoint.x,
-                        y = dataPoint.y
+                val circleOffset = Offset(
+                    x = dataPoint.x,
+                    y = dataPoint.y
+                )
+                drawCircle(
+                    color = style.selectedColor,
+                    radius = 10f,
+                    center = circleOffset
+                )
+                if(selectedDataPointIndex == drawPointIndex) {
+                    drawCircle(
+                        color = Color.White,
+                        radius = 15f,
+                        center = circleOffset
                     )
                     drawCircle(
                         color = style.selectedColor,
-                        radius = 10f,
-                        center = circleOffset
+                        radius = 15f,
+                        center = circleOffset,
+                        style = Stroke(
+                            width = 3f
+                        )
                     )
-                    if(selectedDataPointIndex == drawPointIndex) {
-                        drawCircle(
-                            color = Color.White,
-                            radius = 15f,
-                            center = circleOffset
-                        )
-                        drawCircle(
-                            color = style.selectedColor,
-                            radius = 15f,
-                            center = circleOffset,
-                            style = Stroke(
-                                width = 3f
-                            )
-                        )
-                    }
                 }
             }
         }
@@ -382,14 +398,24 @@ fun LineChart(
 private fun getSelectedDataPointIndex(
     touchOffsetX: Float,
     triggerWidth: Float,
-    drawPoints: List<DataPoint>
-) : Int {
+    drawPoints: List<DataPoint>,
+): Int {
     val triggerRangeLeft = touchOffsetX - triggerWidth / 2f
     val triggerRangeRight = touchOffsetX + triggerWidth / 2f
+
+    if (touchOffsetX < drawPoints.first().x - triggerWidth / 2f) {
+        return -1//LEFT
+    }
+
+    if (touchOffsetX > drawPoints.last().x + triggerWidth / 2f) {
+        return -2//RIGHT
+    }
+
     return drawPoints.indexOfFirst { dataPoint ->
-        dataPoint.x in triggerRangeLeft .. triggerRangeRight
+        dataPoint.x in triggerRangeLeft..triggerRangeRight
     }
 }
+
 
 @Preview(widthDp = 1100)
 @Composable
