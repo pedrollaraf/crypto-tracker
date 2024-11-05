@@ -2,6 +2,7 @@ package com.plfdev.crypto_tracker.cryptos.presenter.coins
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.plfdev.crypto_tracker.core.data.networking.RequestStates
 import com.plfdev.crypto_tracker.core.domain.util.onError
 import com.plfdev.crypto_tracker.core.domain.util.onSuccess
 import com.plfdev.crypto_tracker.cryptos.domain.CoinDataSource
@@ -38,19 +39,25 @@ class CoinsViewModel(
 
     private fun loadCoins() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(requestStates = RequestStates.Loading) }
 
             coinDataSource.getCoins().onSuccess { coins ->
-                _state.update {
+                _state.update { it ->
                     it.copy(
-                        coins = coins.map { coin ->
-                            coin.toCoinUi()
-                        },
-                        isLoading = false
+                        requestStates = RequestStates.Success(
+                            coins.map { coin ->
+                                coin.toCoinUi()
+                            }
+                        )
                     )
                 }
             }.onError { error ->
-                _events.send(CoinsEvent.Error(error))
+                _state.update {
+                    it.copy(
+                        requestStates = RequestStates.Failure(error)
+                    )
+                }
+                //_events.send(CoinsEvent.Error(error))
             }
         }
     }
@@ -60,9 +67,9 @@ class CoinsViewModel(
             is CoinsAction.OnCoinClick -> {
                 selectCoin(action.coinUi)
             }
-//            is CoinsAction.OnRefresh -> {
-//                loadCoins()
-//            }
+            is CoinsAction.OnRefresh -> {
+                loadCoins()
+            }
         }
     }
 

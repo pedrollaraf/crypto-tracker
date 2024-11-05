@@ -51,12 +51,15 @@ fun AdaptiveCoinsDetailPane(
                 CoinsScreen(
                     state = state,
                     onAction = { action ->
-                        viewModel.onAction(action)
                         when(action) {
                             is CoinsAction.OnCoinClick -> {
+                                viewModel.onAction(action)
                                 navigator.navigateTo(
                                     pane = ListDetailPaneScaffoldRole.Detail
                                 )
+                            }
+                            is CoinsAction.OnRefresh -> {
+                                viewModel.onAction(action)
                             }
                         }
                     }

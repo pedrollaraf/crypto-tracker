@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.plfdev.crypto_tracker.R
+import com.plfdev.crypto_tracker.core.data.networking.RequestStates
 import com.plfdev.crypto_tracker.cryptos.presenter.coin_detail.chart.ChartStyle
 import com.plfdev.crypto_tracker.cryptos.presenter.coin_detail.chart.DataPoint
 import com.plfdev.crypto_tracker.cryptos.presenter.coin_detail.chart.LineChart
@@ -60,7 +61,7 @@ fun CoinDetailScreen(
     } else {
         Color.Black
     }
-    if(state.isLoading) {
+    if(state.requestStates is RequestStates.Loading) {
         Box(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
