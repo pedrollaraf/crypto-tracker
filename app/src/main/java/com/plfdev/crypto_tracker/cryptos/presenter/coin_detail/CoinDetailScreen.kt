@@ -17,8 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,7 +57,7 @@ import com.plfdev.crypto_tracker.ui.theme.greenBackground
 @Composable
 fun CoinDetailScreen(
     modifier: Modifier = Modifier,
-    state: CoinsState
+    state: CoinsState,
 ) {
     val contentColor = if(isSystemInDarkTheme()) {
         Color.White

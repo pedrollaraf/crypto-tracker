@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.plfdev.crypto_tracker.core.navigation.AdaptiveCoinsDetailPane
+import com.plfdev.crypto_tracker.core.navigation.AdaptiveMainContainerNavigation
 import com.plfdev.crypto_tracker.ui.theme.CryptoTrackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CryptoTrackerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AdaptiveCoinsDetailPane(
+                    AdaptiveMainContainerNavigation(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
