@@ -18,8 +18,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -48,16 +49,20 @@ import com.plfdev.crypto_tracker.cryptos.presenter.coin_detail.chart.ChartStyle
 import com.plfdev.crypto_tracker.cryptos.presenter.coin_detail.chart.DataPoint
 import com.plfdev.crypto_tracker.cryptos.presenter.coin_detail.chart.LineChart
 import com.plfdev.crypto_tracker.cryptos.presenter.coin_detail.components.InfoCard
+import com.plfdev.crypto_tracker.cryptos.presenter.coins.components.LoadingDotsWithAnimation
 import com.plfdev.crypto_tracker.cryptos.presenter.coins.components.previewCoin
 import com.plfdev.crypto_tracker.cryptos.presenter.coins.screen.CoinsState
 import com.plfdev.crypto_tracker.cryptos.presenter.models.toDisplayableNumber
 import com.plfdev.crypto_tracker.ui.theme.CryptoTrackerTheme
+import com.plfdev.crypto_tracker.ui.theme.SpaceMono
 import com.plfdev.crypto_tracker.ui.theme.greenBackground
 
 @Composable
 fun CoinDetailScreen(
     modifier: Modifier = Modifier,
     state: CoinsState,
+    onBack: () -> Unit,
+    onFavorite: (Boolean) -> Unit,
 ) {
     val contentColor = if(isSystemInDarkTheme()) {
         Color.White
@@ -69,117 +74,160 @@ fun CoinDetailScreen(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            LoadingDotsWithAnimation(
+                numDots = 4,
+                circleSize = 16.dp,
+                circleColor = MaterialTheme.colorScheme.primary
+            )
         }
     } else if(state.selectedCoin != null) {
         val coin = state.selectedCoin
 
-        Column(
-            modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = coin.iconRes),
-                contentDescription = coin.name,
-                modifier = Modifier.size(100.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = coin.name,
-                fontSize = 40.sp,
-                fontWeight = FontWeight.Black,
-                textAlign = TextAlign.Center,
-                color = contentColor
-            )
-            Text(
-                text = coin.symbol,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Black,
-                textAlign = TextAlign.Center,
-                color = contentColor
-            )
+        Box(modifier = Modifier.fillMaxSize()) {
 
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                InfoCard(
-                    title = stringResource(id = R.string.market_cap),
-                    formattedText = "$ ${coin.marketCapUsd.formatted}",
-                    icon = ImageVector.vectorResource(R.drawable.stock)
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = coin.iconRes),
+                    contentDescription = coin.name,
+                    modifier = Modifier.size(100.dp),
+                    tint = MaterialTheme.colorScheme.primary
                 )
-                InfoCard(
-                    title = stringResource(id = R.string.price),
-                    formattedText = "$ ${coin.priceUsd.formatted}",
-                    icon = ImageVector.vectorResource(R.drawable.dollar)
+                Text(
+                    text = coin.name,
+                    fontSize = 34.sp,
+                    fontWeight = FontWeight.Black,
+                    textAlign = TextAlign.Center,
+                    color = contentColor,
+                    modifier = Modifier.padding(vertical = 16.dp),
+                    style = TextStyle(
+                        lineHeight = 38.sp,
+                        fontFamily = SpaceMono
+                    )
                 )
-                val absoluteChangeFormatted = (coin.priceUsd.value * (coin.changePercent24Hr.value / 100)).toDisplayableNumber()
-                val isPositive = coin.changePercent24Hr.value > 0.0
-                val changeLast24hColor = if(isPositive) {
-                    if(isSystemInDarkTheme()) {
-                        Color.Green
+
+                Text(
+                    text = coin.symbol,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Black,
+                    textAlign = TextAlign.Center,
+                    color = contentColor
+                )
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    InfoCard(
+                        title = stringResource(id = R.string.market_cap),
+                        formattedText = "$ ${coin.marketCapUsd.formatted}",
+                        icon = ImageVector.vectorResource(R.drawable.stock)
+                    )
+                    InfoCard(
+                        title = stringResource(id = R.string.price),
+                        formattedText = "$ ${coin.priceUsd.formatted}",
+                        icon = ImageVector.vectorResource(R.drawable.dollar)
+                    )
+                    val absoluteChangeFormatted = (coin.priceUsd.value * (coin.changePercent24Hr.value / 100)).toDisplayableNumber()
+                    val isPositive = coin.changePercent24Hr.value > 0.0
+                    val changeLast24hColor = if(isPositive) {
+                        if(isSystemInDarkTheme()) {
+                            Color.Green
+                        } else {
+                            greenBackground
+                        }
                     } else {
-                        greenBackground
+                        MaterialTheme.colorScheme.error
                     }
-                } else {
-                    MaterialTheme.colorScheme.error
+                    InfoCard(
+                        title = stringResource(id = R.string.change_last_24h),
+                        formattedText = "$ ${absoluteChangeFormatted.formatted}",
+                        icon = if(isPositive) ImageVector.vectorResource(R.drawable.trending) else ImageVector.vectorResource(R.drawable.trending_down),
+                        contentColor = changeLast24hColor
+                    )
                 }
-                InfoCard(
-                    title = stringResource(id = R.string.change_last_24h),
-                    formattedText = "$ ${absoluteChangeFormatted.formatted}",
-                    icon = if(isPositive) ImageVector.vectorResource(R.drawable.trending) else ImageVector.vectorResource(R.drawable.trending_down),
-                    contentColor = changeLast24hColor
+
+                AnimatedVisibility(
+                    visible = coin.coinPriceHistory.isNotEmpty()
+                ) {
+                    var selectedDataPoint by remember {
+                        mutableStateOf<DataPoint?>(coin.coinPriceHistory.first())
+                    }
+
+                    var labelWidth by remember {
+                        mutableFloatStateOf(0f)
+                    }
+                    var totalChartWidth by remember {
+                        mutableFloatStateOf(0f)
+                    }
+                    val amountOfVisibleDataPoints = if(labelWidth > 0) {
+                        ((totalChartWidth - 2.5 * labelWidth) / labelWidth).toInt()
+                    } else { 0 }
+
+                    val startIndex = (coin.coinPriceHistory.lastIndex - amountOfVisibleDataPoints).coerceAtLeast(0)
+
+                    LineChart(
+                        dataPoints = coin.coinPriceHistory,
+                        style = ChartStyle(
+                            chartLineColor = MaterialTheme.colorScheme.primary,
+                            unselectedColor = MaterialTheme.colorScheme.secondary.copy(
+                                alpha = 0.6f
+                            ),
+                            selectedColor = MaterialTheme.colorScheme.primary,
+                            helperLinesThicknessPx = 5f,
+                            axisLinesThicknessPx = 5f,
+                            labelFontSize = 14.sp,
+                            minYLabelSpacing = 25.dp,
+                            verticalPadding = 8.dp,
+                            horizontalPadding = 8.dp,
+                            xAxisLabelSpacing = 8.dp
+                        ),
+                        visibleDataPointsIndices = startIndex..coin.coinPriceHistory.lastIndex,
+                        unit = "$",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(16 / 9f)
+                            .onSizeChanged {
+                                totalChartWidth = it.width.toFloat()
+                            },
+                        selectedDataPoint = selectedDataPoint,
+                        onSelectedDataPoint = {
+                            selectedDataPoint = it
+                        },
+                        onXLabelWidthChange = { labelWidth = it }
+                    )
+                }
+            }
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = stringResource(R.string.voltar),
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
-            AnimatedVisibility(
-                visible = coin.coinPriceHistory.isNotEmpty()
+            IconButton(
+                onClick = {
+
+                },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp),
             ) {
-                var selectedDataPoint by remember {
-                    mutableStateOf<DataPoint?>(coin.coinPriceHistory.first())
-                }
-
-                var labelWidth by remember {
-                    mutableFloatStateOf(0f)
-                }
-                var totalChartWidth by remember {
-                    mutableFloatStateOf(0f)
-                }
-                val amountOfVisibleDataPoints = if(labelWidth > 0) {
-                    ((totalChartWidth - 2.5 * labelWidth) / labelWidth).toInt()
-                } else { 0 }
-
-                val startIndex = (coin.coinPriceHistory.lastIndex - amountOfVisibleDataPoints).coerceAtLeast(0)
-
-                LineChart(
-                    dataPoints = coin.coinPriceHistory,
-                    style = ChartStyle(
-                        chartLineColor = MaterialTheme.colorScheme.primary,
-                        unselectedColor = MaterialTheme.colorScheme.secondary.copy(
-                            alpha = 0.6f
-                        ),
-                        selectedColor = MaterialTheme.colorScheme.primary,
-                        helperLinesThicknessPx = 5f,
-                        axisLinesThicknessPx = 5f,
-                        labelFontSize = 14.sp,
-                        minYLabelSpacing = 25.dp,
-                        verticalPadding = 8.dp,
-                        horizontalPadding = 8.dp,
-                        xAxisLabelSpacing = 8.dp
-                    ),
-                    visibleDataPointsIndices = startIndex..coin.coinPriceHistory.lastIndex,
-                    unit = "$",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(16/9f)
-                        .onSizeChanged {
-                            totalChartWidth = it.width.toFloat()
-                        },
-                    selectedDataPoint = selectedDataPoint,
-                    onSelectedDataPoint = {
-                        selectedDataPoint = it
-                    },
-                    onXLabelWidthChange = { labelWidth = it }
+                Icon(
+                    imageVector = Icons.Outlined.FavoriteBorder,
+                    contentDescription = stringResource(R.string.voltar),
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -194,7 +242,9 @@ private fun CoinDetailScreenPreview() {
             state = CoinsState(
                selectedCoin = previewCoin
             ),
-            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
+            onBack = {},
+            onFavorite = {}
         )
     }
 }

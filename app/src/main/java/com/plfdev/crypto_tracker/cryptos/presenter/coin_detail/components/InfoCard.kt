@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -43,7 +44,7 @@ fun InfoCard(
         color = contentColor,
     )
     Card(
-        modifier = modifier.padding(8.dp).shadow(
+        modifier = modifier.padding(8.dp).sizeIn(minWidth = 150.dp).shadow(
             elevation = 16.dp,
             shape = RectangleShape,
             ambientColor = MaterialTheme.colorScheme.primary,
@@ -111,7 +112,7 @@ private fun InfoCardPreview() {
     CryptoTrackerTheme {
         InfoCard(
             title = "Price",
-            formattedText = "$ 63,157.44",
+            formattedText = "$ 6",
             icon = ImageVector.vectorResource(
                 id = R.drawable.dollar
             )

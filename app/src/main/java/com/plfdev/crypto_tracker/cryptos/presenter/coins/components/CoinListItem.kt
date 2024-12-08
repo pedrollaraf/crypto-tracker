@@ -102,8 +102,8 @@ fun CoinListItemPreview() {
 internal  val previewCoin = Coin(
     id = "bitcoin",
     rank = 1,
-    name = "Bitcoin",
-    symbol = "BTC",
+    name = "Artificial Superintelligence Alliance",
+    symbol = "FET",
     marketCapUsd = 1241273958896.75,
     priceUsd = 62828.15,
     changePercent24Hr = -0.1

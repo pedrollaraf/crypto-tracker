@@ -14,7 +14,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -35,15 +34,15 @@ class CoinsViewModel(
     )
 
     private val _events = Channel<CoinsEvent>()//WE ARE CREATING A CHANNEL HERE BECAUSE WE GONNA SEND ERROR MESSAGE BY TOAST
-    val events = _events.receiveAsFlow()//IF WE WILL CHANGE THE VIEW STATE YOU CAN SET IN COINS_STATE
+    //val events = _events.receiveAsFlow()//IF WE WILL CHANGE THE VIEW STATE YOU CAN SET IN COINS_STATE
 
     private fun loadCoins() {
         viewModelScope.launch {
             _state.update { it.copy(requestStates = RequestStates.Loading) }
 
             coinDataSource.getCoins().onSuccess { coins ->
-                _state.update { it ->
-                    it.copy(
+                _state.update { coinsState ->
+                    coinsState.copy(
                         requestStates = RequestStates.Success(
                             coins.map { coin ->
                                 coin.toCoinUi()

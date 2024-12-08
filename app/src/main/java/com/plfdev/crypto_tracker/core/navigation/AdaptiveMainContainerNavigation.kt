@@ -5,6 +5,7 @@ package com.plfdev.crypto_tracker.core.navigation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -12,12 +13,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRailItemDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
-import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
@@ -94,20 +95,18 @@ fun AdaptiveMainContainerNavigation(
             AppDestinations.entries.forEach { screens ->
                 val isSelected = screens == currentDestination
                 item(
-                    modifier = Modifier.height(45.dp),
+                    modifier = Modifier,
                     colors = navigationSuiteItemColors,
                     selected = isSelected,
+                    alwaysShowLabel = layoutType == NavigationSuiteType.NavigationDrawer,
                     icon = {
                         Icon(
-                            imageVector = if(isSelected)
-                                screens.selectedIcon
-                            else screens.unselectedIcon,
+                            imageVector = if (isSelected) screens.selectedIcon else screens.unselectedIcon,
                             contentDescription = null,
-                            modifier = Modifier.size(28.dp)
                         )
                     },
                     label = {
-                        if(layoutType == NavigationSuiteType.NavigationDrawer) {
+                        if (layoutType == NavigationSuiteType.NavigationDrawer) {
                             Text(screens.title)
                         }
                     },
@@ -117,58 +116,64 @@ fun AdaptiveMainContainerNavigation(
                 )
             }
         },
-        layoutType = layoutType
+        layoutType = layoutType,
     ) {
-        when (currentDestination) {
-            AppDestinations.HOME ->  NavigableListDetailPaneScaffold(
-                modifier = modifier,
-                navigator = navigator,
-                listPane = {
-                    AnimatedPane {
-                        CoinsScreen(
-                            state = state,
-                            onAction = { action ->
-                                when(action) {
-                                    is CoinsAction.OnCoinClick -> {
-                                        viewModel.onAction(action)
-                                        navigator.navigateTo(
-                                            pane = ListDetailPaneScaffoldRole.Detail
-                                        )
-                                    }
-                                    is CoinsAction.OnRefresh -> {
-                                        viewModel.onAction(action)
+        Scaffold { innerPadding ->
+            when (currentDestination) {
+                AppDestinations.HOME ->  NavigableListDetailPaneScaffold(
+                    modifier = modifier.fillMaxSize().padding(innerPadding),
+                    navigator = navigator,
+                    listPane = {
+                        AnimatedPane {
+                            CoinsScreen(
+                                state = state,
+                                onAction = { action ->
+                                    when(action) {
+                                        is CoinsAction.OnCoinClick -> {
+                                            viewModel.onAction(action)
+                                            navigator.navigateTo(
+                                                pane = ListDetailPaneScaffoldRole.Detail
+                                            )
+                                        }
+                                        is CoinsAction.OnRefresh -> {
+                                            viewModel.onAction(action)
+                                        }
                                     }
                                 }
-                            }
-                        )
+                            )
+                        }
+                    },
+                    detailPane = {
+                        AnimatedPane {
+                            CoinDetailScreen(
+                                state = state,
+                                onBack = {
+                                     navigator.navigateBack()
+                                },
+                                onFavorite = {}
+                            )
+                        }
+                    },
+                )
+                AppDestinations.FAVORITES -> {
+                    Box(
+                        modifier = modifier.fillMaxSize().padding(innerPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Favorites")
                     }
-                },
-                detailPane = {
-                    AnimatedPane {
-                        CoinDetailScreen(
-                            state = state,
-
-                        )
-                    }
-                },
-            )
-            AppDestinations.FAVORITES -> {
-                Box(
-                    modifier = modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Favorites")
                 }
-            }
-            AppDestinations.PROFILE -> {
-                Box(
-                    modifier = modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Profile")
+                AppDestinations.PROFILE -> {
+                    Box(
+                        modifier = modifier.fillMaxSize().padding(innerPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Profile")
+                    }
                 }
             }
         }
+
     }
 }
 

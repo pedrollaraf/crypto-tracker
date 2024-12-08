@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import com.plfdev.crypto_tracker.core.navigation.AdaptiveMainContainerNavigation
 import com.plfdev.crypto_tracker.ui.theme.CryptoTrackerTheme
 
@@ -27,11 +28,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CryptoTrackerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AdaptiveMainContainerNavigation(
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AdaptiveMainContainerNavigation()
             }
         }
     }
